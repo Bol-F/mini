@@ -6,7 +6,6 @@ from django.db import transaction
 from rest_framework import serializers
 
 from accounts.models import Account, Profile
-from accounts.services.otp import create_and_send_email_otp
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -14,7 +13,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True,
         trim_whitespace=False,
     )
-
     password2 = serializers.CharField(
         write_only=True,
         trim_whitespace=False,
@@ -41,10 +39,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return email
 
     def validate(self, attrs):
-        password = attrs["password"]
-        password2 = attrs["password2"]
-
-        if password != password2:
+        if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError(
                 {
                     "password2": "Passwords do not match.",
@@ -59,7 +54,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         try:
             validate_password(
-                password,
+                attrs["password"],
                 user=temporary_account,
             )
         except DjangoValidationError as error:
@@ -86,9 +81,5 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
 
             Profile.objects.create(account=account)
-
-            transaction.on_commit(
-                lambda: create_and_send_email_otp(account)
-            )
 
         return account

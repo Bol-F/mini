@@ -5,21 +5,25 @@ from accounts.models import Account
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
-
     password = serializers.CharField(
         write_only=True,
         trim_whitespace=False,
     )
 
-    def validate(self, attrs):
-        email = attrs["email"].strip().lower()
-        password = attrs["password"]
+    def validate_email(self, value):
+        return value.strip().lower()
 
+    def validate(self, attrs):
         account = Account.objects.filter(
-            email__iexact=email,
+            email__iexact=attrs["email"],
         ).first()
 
-        if account is None or not account.check_password(password):
+        if account is None:
+            raise serializers.ValidationError(
+                "Invalid email or password."
+            )
+
+        if not account.check_password(attrs["password"]):
             raise serializers.ValidationError(
                 "Invalid email or password."
             )
@@ -37,5 +41,4 @@ class LoginSerializer(serializers.Serializer):
             )
 
         attrs["account"] = account
-
         return attrs

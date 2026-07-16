@@ -26,12 +26,14 @@ def send_otp(account):
         message=f"Your verification code is: {code}",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[account.email],
+        fail_silently=False,
     )
 
 
 def verify_otp(email, code):
     account = Account.objects.filter(
-        email__iexact=email,
+        email__iexact=email.strip().lower(),
+        is_active=True,
     ).first()
 
     if account is None:
@@ -47,9 +49,14 @@ def verify_otp(email, code):
     if otp is None:
         raise ValueError("Invalid email or code.")
 
-    if otp.expires_at < timezone.now():
+    if otp.expires_at <= timezone.now():
         otp.delete()
         raise ValueError("Code has expired.")
+
+    if otp.attempts >= 5:
+        raise ValueError(
+            "Too many attempts. Request a new code."
+        )
 
     if not check_password(code, otp.code_hash):
         otp.attempts += 1

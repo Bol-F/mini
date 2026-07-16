@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from accounts.services.otp import send_otp, verify_otp
 from accounts.models import Account
+from accounts.services.otp import send_otp, verify_otp
 
 
 class VerifyOTPSerializer(serializers.Serializer):
@@ -11,6 +11,9 @@ class VerifyOTPSerializer(serializers.Serializer):
         max_length=6,
         write_only=True,
     )
+
+    def validate_email(self, value):
+        return value.strip().lower()
 
     def validate_code(self, value):
         if not value.isdigit():
@@ -35,6 +38,9 @@ class VerifyOTPSerializer(serializers.Serializer):
 class ResendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
+    def validate_email(self, value):
+        return value.strip().lower()
+
     def create(self, validated_data):
         account = Account.objects.filter(
             email__iexact=validated_data["email"],
@@ -42,7 +48,7 @@ class ResendOTPSerializer(serializers.Serializer):
             is_email_verified=False,
         ).first()
 
-        if account:
+        if account is not None:
             send_otp(account)
 
         return validated_data
