@@ -10,4 +10,5 @@ dependencies = [
     "djangorestframework>=3.17.1",
     "pillow>=12.3.0",
     "psycopg[binary]>=3.3.4",
+    "pyjwt>=2.13.0",
 ]

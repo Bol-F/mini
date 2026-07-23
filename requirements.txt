@@ -1,6 +1,6 @@
-uv==0.11.28
 django==6.0.7
 djangorestframework==3.17.1
 psycopg-binary==3.3.4
 django-environ==0.14.0
 pillow==12.3.0
+pyjwt==2.13.0

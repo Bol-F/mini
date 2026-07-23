@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('accounts', '0001_initial'),
     ]
@@ -20,7 +19,8 @@ class Migration(migrations.Migration):
                 ('code_hash', models.CharField(max_length=255)),
                 ('expires_at', models.DateTimeField()),
                 ('attempts', models.PositiveSmallIntegerField(default=0)),
-                ('account', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='email_verification_otp', to=settings.AUTH_USER_MODEL)),
+                ('account', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE,
+                                                 related_name='email_verification_otp', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'abstract': False,

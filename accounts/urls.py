@@ -7,7 +7,6 @@ from accounts.views.otp import ResendOTPView, VerifyOTPView
 from accounts.views.profile import ProfileMeView
 from accounts.views.register import RegisterView
 
-
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
     path("verify-otp/", VerifyOTPView.as_view(), name="verify-otp"),
