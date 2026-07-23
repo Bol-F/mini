@@ -77,6 +77,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                 username=internal_username,
                 password=password,
                 is_email_verified=False,
+                role=Account.Role.USER,
                 **validated_data,
             )
 

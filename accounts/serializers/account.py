@@ -11,6 +11,7 @@ class AccountSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "role",
             "is_active",
             "is_email_verified",
             "date_joined",
